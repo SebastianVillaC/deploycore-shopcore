@@ -82,7 +82,7 @@ namespace Tienda_Online.Backend.Controllers
             {
                 userid = user.Id,
                 token = myToken
-            }, HttpContext.Request.Scheme, _configuration["Url Frontend"]);
+            }, HttpContext.Request.Scheme, _configuration["UrlFrontend"]);
             var response = _mailHelper.SendMail(user.Nombre, user.Email!,
             $"Tienda_Online - Recuperación de contraseña",
             $"<h1>Tienda_Onlie - Recuperación de contraseña</h1>" +
@@ -225,7 +225,7 @@ namespace Tienda_Online.Backend.Controllers
             {
                 userid = user.Id,
                 token = myToken
-            }, HttpContext.Request.Scheme, _configuration["Url Frontend"]);
+            }, HttpContext.Request.Scheme, _configuration["UrlFrontend"]);
             return _mailHelper.SendMail(user.Nombre, user.Email!,
             $"Tienda_Online - Confirmación de cuenta",
             $"<h1>Tienda_Online - Confirmación de cuenta</h1>" +
