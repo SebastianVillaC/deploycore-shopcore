@@ -18,8 +18,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//Conexi髇 a la base de datos
-builder.Services.AddDbContext<DataContext>(x=>x.UseSqlServer("name=DefaultConnection"));
+//Base de datos: EF Core InMemory. No necesita SQL Server ni cadenas de conexi贸n,
+//as铆 la API arranca igual en local, en la pipeline de CI y en Azure App Service.
+//Los datos se recrean (seed) en cada inicio de la aplicaci贸n.
+builder.Services.AddDbContext<DataContext>(x => x.UseInMemoryDatabase("ShopCore"));
 
 //Inyectamos las clases de los servicios
 builder.Services.AddScoped<clsProducto>();
@@ -80,6 +82,17 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+//La clave JWT es un secreto: nunca se guarda en el repositorio.
+//Local: dotnet user-secrets set jwtKey "<clave>"  路  Azure: App Setting "jwtKey".
+var jwtKey = builder.Configuration["jwtKey"];
+if (string.IsNullOrWhiteSpace(jwtKey) || Encoding.UTF8.GetByteCount(jwtKey) < 32)
+{
+    throw new InvalidOperationException(
+        "Falta la configuraci贸n 'jwtKey' o tiene menos de 32 caracteres. " +
+        "Local: dotnet user-secrets set jwtKey \"<clave>\" --project Tienda_Online.Backend. " +
+        "Azure: agregar el App Setting 'jwtKey' en el App Service.");
+}
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(x => x.TokenValidationParameters = new TokenValidationParameters
 {
@@ -87,7 +100,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     ValidateAudience = false,
     ValidateLifetime = true,
     ValidateIssuerSigningKey = true,
-    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["jwtKey"]!)),
+    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
     ClockSkew = TimeSpan.Zero
 });
 
@@ -131,15 +144,20 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+//Comprobaci贸n de salud usada por el smoke test del Release (CD).
+//"version" y "commit" los escribe la pipeline de CI en appsettings.json antes de publicar,
+//lo que permite relacionar lo desplegado con la ejecuci贸n de CI y el commit de GitHub.
 app.MapGet("/health", async (DataContext db, IWebHostEnvironment env, IConfiguration config) =>
 {
     var dbOk = await db.Database.CanConnectAsync();
     var body = new
     {
         status = dbOk ? "OK" : "DEGRADED",
-        database = dbOk ? "OK" : "ERROR",
+        database = dbOk ? "OK (InMemory)" : "ERROR",
+        productos = dbOk ? await db.Productos.CountAsync() : 0,
         environment = env.EnvironmentName,
-        version = config["App:Version"] ?? "sin-configurar",
+        version = string.IsNullOrWhiteSpace(config["App:Version"]) ? "local" : config["App:Version"],
+        commit = string.IsNullOrWhiteSpace(config["App:Commit"]) ? "local" : config["App:Commit"],
         utc = DateTime.UtcNow
     };
     return dbOk ? Results.Ok(body) : Results.Json(body, statusCode: 503);
@@ -148,3 +166,6 @@ app.MapGet("/health", async (DataContext db, IWebHostEnvironment env, IConfigura
 app.MapControllers();
 
 app.Run();
+
+//Necesario para que el proyecto de pruebas use WebApplicationFactory<Program>.
+public partial class Program { }
