@@ -1,0 +1,108 @@
+# =====================================================================
+# CI · ShopCore (equipo Deploy Core)
+# Se ejecuta automáticamente con cada cambio confirmado en la rama main
+# del repositorio de GitHub: restaura, compila, ejecuta las pruebas y
+# publica los artefactos que consume el Release (CD):
+#   - shopcore-api : zip de la API (Tienda_Online.Backend)
+#   - shopcore-web : zip del frontend Blazor WebAssembly
+# =====================================================================
+
+name: shopcore-ci-$(Date:yyyyMMdd).$(Rev:r)
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    exclude:          # cambios solo de documentación/evidencias no disparan CI
+      - docs/**
+      - evidencias/**
+
+pr:                   # cada pull request hacia main se valida (build + pruebas)
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  buildConfiguration: Release
+  solution: Tienda_Online/Tienda_Online.sln
+  # Valores que FileTransform escribe en appsettings.json de la API y que
+  # luego muestra /health -> trazabilidad commit -> ejecución CI -> despliegue
+  App.Version: $(Build.BuildNumber)
+  App.Commit: $(Build.SourceVersion)
+
+stages:
+  - stage: CI
+    displayName: Integración Continua
+    jobs:
+      - job: Build
+        displayName: Restaurar, compilar, probar y publicar artefactos
+        steps:
+          - task: UseDotNet@2
+            displayName: Instalar .NET SDK (global.json)
+            inputs:
+              packageType: sdk
+              useGlobalJson: true
+
+          - task: DotNetCoreCLI@2
+            displayName: Restaurar dependencias
+            inputs:
+              command: restore
+              projects: $(solution)
+
+          - task: FileTransform@1
+            displayName: Registrar versión y commit en appsettings.json
+            inputs:
+              folderPath: $(Build.SourcesDirectory)/Tienda_Online/Tienda_Online.Backend
+              fileType: json
+              targetFiles: appsettings.json
+
+          - task: DotNetCoreCLI@2
+            displayName: Compilar ($(buildConfiguration))
+            inputs:
+              command: build
+              projects: $(solution)
+              arguments: --configuration $(buildConfiguration) --no-restore
+
+          - task: DotNetCoreCLI@2
+            displayName: Ejecutar pruebas automatizadas
+            inputs:
+              command: test
+              projects: Tienda_Online/Tienda_Online.Tests/Tienda_Online.Tests.csproj
+              arguments: --configuration $(buildConfiguration) --no-build --collect "XPlat Code Coverage"
+              publishTestResults: true
+
+          - task: DotNetCoreCLI@2
+            displayName: Publicar API (zip)
+            inputs:
+              command: publish
+              publishWebProjects: false
+              projects: Tienda_Online/Tienda_Online.Backend/Tienda_Online.Backend.csproj
+              arguments: --configuration $(buildConfiguration) --no-build --output $(Build.ArtifactStagingDirectory)/api
+              zipAfterPublish: true
+
+          - task: DotNetCoreCLI@2
+            displayName: Publicar Frontend Blazor (zip)
+            inputs:
+              command: publish
+              publishWebProjects: false
+              projects: Tienda_Online/Tienda_Online.Frontend/Tienda_Online.Frontend.csproj
+              arguments: --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/web
+              zipAfterPublish: true
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Artefacto: shopcore-api'
+            inputs:
+              targetPath: $(Build.ArtifactStagingDirectory)/api
+              artifact: shopcore-api
+              publishLocation: pipeline
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Artefacto: shopcore-web'
+            inputs:
+              targetPath: $(Build.ArtifactStagingDirectory)/web
+              artifact: shopcore-web
+              publishLocation: pipeline
