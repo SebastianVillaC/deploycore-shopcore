@@ -90,6 +90,7 @@ namespace Tienda_Online.Backend.Controllers
         [HttpGet("CD")]
         public async Task<IActionResult> PruebaCD(int id)
         {
+            var nuevo = new List<object>();
             return Ok(true);
         }
     }
