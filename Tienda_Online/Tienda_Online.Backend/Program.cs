@@ -144,7 +144,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-//Comprobación de salud usada por el smoke test del Release (CD).
+//Comprobación de salud: permite verificar en Azure qué versión quedó desplegada.
 //"version" y "commit" los escribe la pipeline de CI en appsettings.json antes de publicar,
 //lo que permite relacionar lo desplegado con la ejecución de CI y el commit de GitHub.
 app.MapGet("/health", async (DataContext db, IWebHostEnvironment env, IConfiguration config) =>
