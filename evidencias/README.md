@@ -53,15 +53,14 @@ Si el `push` es rechazado porque alguien subió algo antes, ejecuta `git pull or
 | 06 | `06_release_tareas.png` | Tareas del Release: despliegue de la API y del frontend | Sebastian | ⬜ |
 | 07 | `07_release_automatico_ok.png` | Lista de releases: release creado automáticamente desde `main`, en verde | Sebastian | ⬜ |
 | 08 | `08_release_logs_despliegue.png` | Logs de un release: despliegue de la API y del frontend exitosos | David | ⬜ |
-| 09 | `09_api_health_publica.png` | `https://shopcoreapi-bgegbefuf2bnavbr.centralus-01.azurewebsites.net/health` con versión y commit | Laura | ⬜ |
-| 10 | `10_web_antes_cambio.png` | Frontend antes del cambio de la demo del video 2 (banner v1.1) | Laura | ⬜ |
-| 11 | `11_web_despues_cambio.png` | Frontend después del cambio (banner v1.2) | Brayan | ⬜ |
+| 09 | `09_api_health_publica.png` | `https://shopcoreapi-bgegbefuf2bnavbr.centralus-01.azurewebsites.net/health` **después** del cambio del video, con la versión y el commit del v1.1 | Laura | ⬜ |
+| 10 | `10_web_antes_cambio.png` | Frontend **antes** del cambio del video (banner v1.0). Tomarla antes de grabar | Laura | ⬜ |
+| 11 | `11_web_despues_cambio.png` | Frontend **después** del cambio del video (banner v1.1) | Brayan | ⬜ |
 
 ## Trazabilidad del cambio demostrado
 
-La completa **Laura** después de los videos.
+El cambio controlado del video (v1.1) recorre todo el flujo: GitHub → CI → artefacto → Release → Azure. La tabla la completa **Laura** después del video.
 
 | Cambio | Commit en `main` | Ejecución CI | Release | Versión en `/health` |
 |---|---|---|---|---|
-| v1.1 (video CI) | `<<sha>>` | `<<shopcore-ci-…>>` | `<<Release-N>>` | `<<…>>` |
-| v1.2 (video CD) | `<<sha>>` | `<<shopcore-ci-…>>` | `<<Release-N>>` | `<<…>>` |
+| v1.1 (video CI/CD) | `<<sha>>` | `<<shopcore-ci-…>>` | `<<Release-N>>` | `<<…>>` |
