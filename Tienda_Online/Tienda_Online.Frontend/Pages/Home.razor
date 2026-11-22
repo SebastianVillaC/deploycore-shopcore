@@ -1,7 +1,50 @@
-﻿@page "/"
+@page "/"
+@using System.Net.Http.Json
+@inject HttpClient Http
 
 <PageTitle>Inicio</PageTitle>
 
-<!-- Imagen de fondo que cubre toda la pantalla -->
-<img src="/InicioPrograma.png" style="width:1200px; height:650px; padding:0px"/>
+<div class="alert alert-primary d-flex flex-wrap justify-content-between align-items-center" role="status">
+    <div>
+        <strong>ShopCore @VersionApp.Version</strong> · Deploy Core — @VersionApp.Mensaje
+    </div>
+    <small class="text-muted">
+        @if (salud is null)
+        {
+            <span>API: consultando...</span>
+        }
+        else
+        {
+            <span>API @salud.Version · commit @AbreviarCommit(salud.Commit) · @salud.Environment</span>
+        }
+    </small>
+</div>
 
+<!-- Imagen de portada -->
+<img src="/InicioPrograma.png" alt="ShopCore" style="max-width:100%; height:auto; padding:0px" />
+
+@code {
+    private EstadoApi? salud;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            salud = await Http.GetFromJsonAsync<EstadoApi>("health");
+        }
+        catch
+        {
+            salud = new EstadoApi { Version = "no disponible", Commit = "-", Environment = "-" };
+        }
+    }
+
+    private static string AbreviarCommit(string? commit) =>
+        string.IsNullOrEmpty(commit) || commit.Length <= 7 ? commit ?? "-" : commit[..7];
+
+    private class EstadoApi
+    {
+        public string? Version { get; set; }
+        public string? Commit { get; set; }
+        public string? Environment { get; set; }
+    }
+}

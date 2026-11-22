@@ -13,7 +13,11 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped<IRepository, Repository>();
 
-builder.Services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri("https://shopcoreapi-bgegbefuf2bnavbr.centralus-01.azurewebsites.net") });
+// La URL de la API se lee de wwwroot/appsettings.{Entorno}.json (ApiUrl):
+// Development -> API local · Production -> App Service de la API en Azure.
+var apiUrl = builder.Configuration["ApiUrl"]
+    ?? throw new InvalidOperationException("Falta la configuración 'ApiUrl' en wwwroot/appsettings.json.");
+builder.Services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri(apiUrl) });
 builder.Services.AddSweetAlert2();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationProviderJWT>();
