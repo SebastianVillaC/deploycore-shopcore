@@ -86,5 +86,11 @@ namespace Tienda_Online.Backend.Controllers
             }
             return BadRequest();
         }
+
+        [HttpGet("CD")]
+        public async Task<IActionResult> PruebaCD(int id)
+        {
+            return Ok(true);
+        }
     }
 }
