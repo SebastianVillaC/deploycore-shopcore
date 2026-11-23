@@ -33,12 +33,12 @@ Si el `push` es rechazado porque alguien subió algo antes, ejecuta `git pull or
 |---|---|---|---|---|
 | 01 | `01_github_repo_main.png` | Repositorio en GitHub: rama `main` y colaborador `oalarconpe` (Settings → Collaborators) | Sebastian | ⬜ |
 | 02 | `02_github_historial_commits.png` | Historial de commits y PR del equipo | Sebastian | ⬜ |
-| 03 | `03_devops_service_connection_github.png` | Conexión de Azure DevOps con GitHub (app "Azure Pipelines" o service connection) | Eduardo | ⬜ |
-| 04 | `04_devops_pipeline_yaml.png` | Pipeline `shopcore-ci` usando `pipelines/ci-shopcore.yml` | Eduardo | ⬜ |
-| 05 | `05_ci_trigger_automatico.png` | Ejecución lanzada automáticamente por un merge a `main` (*Triggered by …* y commit) | Eduardo | ⬜ |
-| 06 | `06_ci_etapas_ok.png` | Pasos de la ejecución en verde | Eduardo | ⬜ |
+| 03 | `03_devops_service_connection_github.png` | Conexión de Azure DevOps con GitHub (app "Azure Pipelines" o service connection) | Eduardo | ✅ |
+| 04 | `04_devops_pipeline_yaml.png` | Pipeline `shopcore-ci` usando `pipelines/ci-shopcore.yml` | Eduardo | ✅ |
+| 05 | `05_ci_trigger_automatico.png` | Ejecución lanzada automáticamente por un merge a `main` (*Triggered by …* y commit) | Eduardo | ✅ |
+| 06 | `06_ci_etapas_ok.png` | Pasos de la ejecución en verde | Eduardo | ✅ |
 | 07 | `07_ci_pruebas.png` | Pestaña *Tests*: 10 pruebas aprobadas | Laura | ⬜ |
-| 08 | `08_ci_artefactos.png` | Artefactos publicados: `shopcore-api` y `shopcore-web` | Eduardo | ⬜ |
+| 08 | `08_ci_artefactos.png` | Artefactos publicados: `shopcore-api` y `shopcore-web` | Eduardo | ✅ |
 | 09 | `09_github_pr_validacion.png` | Un pull request con el check de Azure Pipelines en verde | Laura | ⬜ |
 
 ## CD (`evidencias/cd/`)
