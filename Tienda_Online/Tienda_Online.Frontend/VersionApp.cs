@@ -6,7 +6,7 @@ namespace Tienda_Online.Frontend
     /// </summary>
     public static class VersionApp
     {
-        public const string Version = "v1.0";
-        public const string Mensaje = "Despliegue automatizado con Azure DevOps";
+        public const string Version = "v1.1";
+        public const string Mensaje = "CI/CD automático: de GitHub a Azure App Service";
     }
 }
