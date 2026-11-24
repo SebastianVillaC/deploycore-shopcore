@@ -27,7 +27,7 @@ Capturas de cada etapa del flujo **GitHub → CI → Artefacto → CD → Azure*
 | 05 | [05_release_artefacto_trigger.png](cd/05_release_artefacto_trigger.png) | Release "CD": artefacto `_shopcore-ci` desde la rama `main` |
 | 06 | [06_release_tareas.png](cd/06_release_tareas.png) | Tareas del Release: despliegue de la API y del frontend |
 | 07 | [07_release_automatico_ok.png](cd/07_release_automatico_ok.png) | Releases creados automáticamente; Release-8 del cambio v1.1 en verde |
-| 08 | [08_release_logs_despliegue.png](cd/08_release_logs_despliegue.png) | Logs del despliegue exitoso |
+| 08 | [08_release_logs_despliegue.png](cd/08_release_logs_despliegue.png) | Historial de releases: despliegues desde `main` y, antes de configurar el filtro de rama, releases desde un pull request (`refs/pull/5/merge`) |
 | 09 | [09_api_health_publica.png](cd/09_api_health_publica.png) | `/health` de la API publicada con la versión y el commit del cambio v1.1 |
 | 10 | [10_web_antes_cambio.png](cd/10_web_antes_cambio.png) | Frontend publicado antes del cambio (banner v1.0) |
 | 11 | [11_web_despues_cambio.png](cd/11_web_despues_cambio.png) | Frontend publicado después del cambio (banner v1.1) |
